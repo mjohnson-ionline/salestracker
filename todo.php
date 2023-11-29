@@ -52,10 +52,12 @@
     // lock down the app for various users - done
 
     // DOING
+    // comissions reporting - test it in and out
+    // get a nice chart going
+    // get sales targets working
+    // get a nice chart happening
 
     // TO DO
-    // generate reports for sales people
-
     // 2fa - https://medium.com/@maulanayusupp/how-to-create-two-factor-authentication-with-laravel-a44e58f69319
     // write a good spec document
 

@@ -64,6 +64,8 @@ class UserCrudController extends CrudController
 
         CRUD::column('role')->label('Role')->type('select_from_array')->options(config('app.roles'));
 
+        CRUD::column('organisation_name')->label('Company');
+
         CRUD::column('first_name')->label('First Name');
 
         CRUD::column('last_name')->label('Last Name');
@@ -86,17 +88,21 @@ class UserCrudController extends CrudController
             ->value('<h4 style="margin-bottom:0;padding-bottom:0;">All User Common Fields</h4>')
             ->wrapper(['class' => 'form-group col-md-12']);
 
+        CRUD::field('organisation_name')
+            ->label('Company')
+            ->wrapper(['class' => 'form-group col-md-6']);
+
         CRUD::field('first_name', 'text')
             ->label('First Name')
-            ->wrapper(['class' => 'form-group col-md-4']);
+            ->wrapper(['class' => 'form-group col-md-6']);
 
         CRUD::field('last_name')
             ->label('Last Name')
-            ->wrapper(['class' => 'form-group col-md-4']);
+            ->wrapper(['class' => 'form-group col-md-6']);
 
         CRUD::field('phone')
             ->label('Best Contact Number')
-            ->wrapper(['class' => 'form-group col-md-4']);
+            ->wrapper(['class' => 'form-group col-md-6']);
 
         CRUD::field('email')
             ->label('Email Address')

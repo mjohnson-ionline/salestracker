@@ -138,38 +138,36 @@
                     @php
                         $total = 0;
                     @endphp
-                    @forelse($resellers_with_data as $key => $res)
-                        @foreach ($res as $reseller)
-                            <tr style="border-bottom: 1px dashed #ccc;">
-                                <td width="30%">
-                                    <p class="p-0 m-0 py-2" style="margin-top:4px;">{{ Str::limit($reseller->first_name . ' ' . $reseller->last_name, 35) }}</p>
-                                </td>
-                                <td width="20%">
-                                    <p class="p-0 m-0 py-2" style="text-align: right;margin-top:4px;">${{ number_format($reseller->total_payments, 2) ?? '' }}</p>
-                                </td>
-                                <td width="20%">
-                                    <p class="p-0 m-0 py-2" style="text-align: right;margin-top:4px;">${{ number_format($reseller->total_comission, 2) ?? '' }}</p>
-                                </td>
-                                <td width="30%">
-                                    <div style="display: flex;margin-left:10px;">
-                                        <div class="btn btn-primary" data-style="zoom-in" style="border:none;margin-left:5px;cursor:pointer;float:right;margin-top:2px;margin-right:2px;" onclick="document.getElementById('send_single_reseller_invoice_{{ $reseller->id }}').submit();"><span class="ladda-label">Send</span></div>
-                                        <div class="btn btn-primary" data-style="zoom-in" style="border:none;margin-left:2px;cursor:pointer;float:right;margin-top:2px;margin-right:1px;" onclick="document.getElementById('download_single_reseller_report_{{ $reseller->id }}').submit();"><span class="ladda-label">Report</span></div>
-                                    </div>
-                                    <form action="{{ backpack_url('comission/report-single') }}" method="post" id="download_single_reseller_report_{{ $reseller->id }}">
-                                        @csrf
-                                        <input type="hidden" name="reseller_id" value="{{ $reseller->id }}">
-                                        <input type="hidden" name="start_date" value="{{ $start_date ?? '' }}" class="start_date">
-                                        <input type="hidden" name="end_date" value="{{ $end_date ?? '' }}" class="end_date">
-                                    </form>
-                                    <form action="{{ backpack_url('comission/send-single') }}" method="post" id="send_single_reseller_invoice_{{ $reseller->id }}">
-                                        @csrf
-                                        <input type="hidden" name="reseller_id" value="{{ $reseller->id }}">
-                                        <input type="hidden" name="start_date" value="{{ $start_date ?? '' }}" class="start_date">
-                                        <input type="hidden" name="end_date" value="{{ $end_date ?? '' }}" class="end_date">
-                                    </form>
-                                </td>
-                            </tr>
-                        @endforeach
+                    @forelse($resellers_with_data as $key => $reseller)
+                        <tr style="border-bottom: 1px dashed #ccc;">
+                            <td width="30%">
+                                <p class="p-0 m-0 py-2" style="margin-top:4px;">{{ Str::limit($reseller->first_name . ' ' . $reseller->last_name, 35) }}</p>
+                            </td>
+                            <td width="20%">
+                                <p class="p-0 m-0 py-2" style="text-align: right;margin-top:4px;">${{ number_format($reseller->total_payments, 2) ?? '' }}</p>
+                            </td>
+                            <td width="20%">
+                                <p class="p-0 m-0 py-2" style="text-align: right;margin-top:4px;">${{ number_format($reseller->total_comission, 2) ?? '' }}</p>
+                            </td>
+                            <td width="30%">
+                                <div style="display: flex;margin-left:10px;">
+                                    <div class="btn btn-primary" data-style="zoom-in" style="border:none;margin-left:5px;cursor:pointer;float:right;margin-top:2px;margin-right:2px;" onclick="document.getElementById('send_single_reseller_invoice_{{ $reseller->id }}').submit();"><span class="ladda-label">Send</span></div>
+                                    <div class="btn btn-primary" data-style="zoom-in" style="border:none;margin-left:2px;cursor:pointer;float:right;margin-top:2px;margin-right:1px;" onclick="document.getElementById('download_single_reseller_report_{{ $reseller->id }}').submit();"><span class="ladda-label">Report</span></div>
+                                </div>
+                                <form action="{{ backpack_url('comission/report-single') }}" method="post" id="download_single_reseller_report_{{ $reseller->id }}">
+                                    @csrf
+                                    <input type="hidden" name="reseller_id" value="{{ $reseller->id }}">
+                                    <input type="hidden" name="start_date" value="{{ $start_date ?? '' }}" class="start_date">
+                                    <input type="hidden" name="end_date" value="{{ $end_date ?? '' }}" class="end_date">
+                                </form>
+                                <form action="{{ backpack_url('comission/send-single') }}" method="post" id="send_single_reseller_invoice_{{ $reseller->id }}">
+                                    @csrf
+                                    <input type="hidden" name="reseller_id" value="{{ $reseller->id }}">
+                                    <input type="hidden" name="start_date" value="{{ $start_date ?? '' }}" class="start_date">
+                                    <input type="hidden" name="end_date" value="{{ $end_date ?? '' }}" class="end_date">
+                                </form>
+                            </td>
+                        </tr>
                     @empty
                         <tr>
                             <td colspan="4"><p style="text-align: center;" class="mt-2">Sorry - something went wrong...No resellers found.</p></td>

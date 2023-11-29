@@ -91,7 +91,6 @@ class DealCrudController extends CrudController
         CRUD::field('reseller_id')
             ->type('select2')
             ->label('Reseller')
-            ->attribute('name')
             ->model('App\Models\User')
             ->entity('reseller')
             ->placeholder('Select Reseller')
