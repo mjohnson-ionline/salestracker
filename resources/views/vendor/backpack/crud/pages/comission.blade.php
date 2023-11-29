@@ -23,7 +23,7 @@
                         <div id="card-chart1-tooltip" class="chartjs-tooltip top" style="opacity: 0; left: 134.926px; top: 131.662px;"><div class="tooltip-header"><div class="tooltip-header-item">June</div></div><div class="tooltip-body"><div class="tooltip-body-item"><span class="tooltip-body-item-color" style="background-color: rgb(124, 105, 239);"></span><span class="tooltip-body-item-label">My First dataset</span><span class="tooltip-body-item-value">60</span></div></div></div></div>
                 </div>
             </div>
-            <div class="col-sm-6 col-lg-3">
+            {{--<div class="col-sm-6 col-lg-3">
                 <div class="card text-white bg-danger">
                     <div class="card-body pb-0">
                         <div class="btn-group float-right">
@@ -64,7 +64,7 @@
                         <canvas class="chart chartjs-render-monitor" id="card-chart2" height="62" width="202" style="display: block; height: 70px; width: 225px;"></canvas>
                     </div>
                 </div>
-            </div>
+            </div>--}}
             <div class="col-sm-6 col-lg-3">
                 <div class="card text-white bg-success">
                     <div class="card-body pb-0">
