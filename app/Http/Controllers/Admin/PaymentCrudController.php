@@ -81,7 +81,7 @@ class PaymentCrudController extends CrudController
         CRUD::removeButton('show');
         CRUD::removeButton('create');
         CRUD::removeButton('delete');
-        CRUD::removeButton('update');
+        // CRUD::removeButton('update'); todo - remove from testing
         CRUD::denyAccess('create');
     }
 

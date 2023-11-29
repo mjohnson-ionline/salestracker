@@ -58,7 +58,7 @@
                         <div class="text-value">
                             {{ count($nonPerformingResellers) }}
                         </div>
-                        <div>Non-Performing Reseller</div>
+                        <div>Non-Performing Resellers</div>
                     </div>
                     <div class="chart-wrapper mt-3 mx-3" style="height:70px;"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
                         <canvas class="chart chartjs-render-monitor" id="card-chart2" height="62" width="202" style="display: block; height: 70px; width: 225px;"></canvas>
@@ -87,13 +87,55 @@
                         <div id="card-chart3-tooltip" class="chartjs-tooltip top" style="opacity: 0; left: 65.6846px; top: 111.4px;"><div class="tooltip-header"><div class="tooltip-header-item">January</div></div><div class="tooltip-body"><div class="tooltip-body-item"><span class="tooltip-body-item-color" style="background-color: rgba(255, 255, 255, 0.2);"></span><span class="tooltip-body-item-label">My First dataset</span><span class="tooltip-body-item-value">78</span></div></div></div></div>
                 </div>
             </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card text-white bg-danger">
+                    <div class="card-body pb-0">
+                        <div class="btn-group float-right">
+                            <button class="btn btn-transparent dropdown-toggle p-0" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-settings"></i></button>
+                            <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">View Resellers</a></div>
+                        </div>
+                        <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="#">View New Sales</a><a class="dropdown-item" href="#">View Resellers</a></div>
+                        <?php
+                        // all resellers with no payments against them
+                        $reseller_qs_q = \App\Models\User::where('role', 'reseller')->get();
+                        $reseller_qs_q_with_data = [];
+                        foreach ($reseller_qs_q as $reseller_q) {
+                            $reseller_qs_q_with_data[] = \App\Models\User::where('id', $reseller_q->id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->get();
+                        }
+                        $nonPerformingResellers = [];
+                        foreach ($reseller_qs_q_with_data as $reseller_q) {
+                            foreach ($reseller_q as $reseller_q_data) {
+                                foreach ($reseller_q_data->deals as $deals) {
+                                    foreach ($deals->invoices as $invoices) {
+                                        foreach ($invoices->payments as $payment) {
+
+                                            // if the payment date is in the current month
+                                            if (date('m', strtotime($payment->date)) == date('m')) {
+                                                $nonPerformingResellers[] = $reseller_q_data;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        ?>
+                        <div class="text-value">
+                            {{ count($nonPerformingResellers) }}
+                        </div>
+                        <div>Non-Performing Sales Managers</div>
+                    </div>
+                    <div class="chart-wrapper mt-3 mx-3" style="height:70px;"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+                        <canvas class="chart chartjs-render-monitor" id="card-chart2" height="62" width="202" style="display: block; height: 70px; width: 225px;"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
 
 @section('content')
     <div class="" style="margin-left:10px;">
-        <h2><span class="text-capitalize">Comissions Overview</span></h2>
+        <h2><span class="text-capitalize">Overview</span></h2>
         <p>Below you can find all the payments, invoices, and comissions/sales information for all deals. These reports are generated from <u>paid</u> invoices.</p>
         <div class="flex">
             <label>

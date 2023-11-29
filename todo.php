@@ -53,9 +53,7 @@
 
     // DOING
     // comissions reporting - test it in and out
-    // get a nice chart going
     // get sales targets working
-    // get a nice chart happening
 
     // TO DO
     // 2fa - https://medium.com/@maulanayusupp/how-to-create-two-factor-authentication-with-laravel-a44e58f69319
@@ -68,10 +66,10 @@
             // single invoice deal
             // multiple invoice deal
     // send invoices to resellers
+    // remove all the todos
 
     // QUESTIONS
     // what information do you want on the emails?
-    // comissions CRUD?
     // admin needs to mark comissions as paid or not
     // do we need to pull across the details from pipedrive like address / phone too? app/Http/Controllers/Admin/Operations/SendXeroInvoiceOperation.php:57
     // send welcome email for resellers?

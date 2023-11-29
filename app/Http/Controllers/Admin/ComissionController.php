@@ -266,7 +266,7 @@ class ComissionController extends Controller
                                         $unix_created_at = strtotime($payment->created_at);
 
                                         if ($unix_created_at < $unix_start_date || $unix_created_at > $unix_end_date) {
-                                            unset($reseller[$key][$key2]->deals[$key3]->invoices[$key4]->payments[$key5]);
+                                            unset($resellers_with_data[$key]->deals[$key3]->invoices[$key4]->payments[$key5]);
                                         }
                                     }
                                 }
