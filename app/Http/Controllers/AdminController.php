@@ -58,7 +58,7 @@ class AdminController extends Controller
                     }
                 }
                 $reseller_data->total_payments = $total_payments;
-                $reseller_data->total_comission = $total_payments / $reseller_data->discount_comission;
+                $reseller_data->total_comission = $total_payments / $reseller_data->discount_comission ?? config('app.default_comission');
             }
         }
 

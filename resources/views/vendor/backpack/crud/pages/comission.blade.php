@@ -94,7 +94,7 @@
 @section('content')
     <div class="" style="margin-left:10px;">
         <h2><span class="text-capitalize">Comissions Overview</span></h2>
-        <p>Below you can find all the payments, invoices, and comissions information for all deals. These reports are generated from <u>paid</u> invoices.</p>
+        <p>Below you can find all the payments, invoices, and comissions/sales information for all deals. These reports are generated from <u>paid</u> invoices.</p>
         <div class="flex">
             <label>
                 Start Date
@@ -116,7 +116,7 @@
     </style>
     <div class="">
         <div style="width: 49%;float: left;vertical-align: top;margin-left:10px;">
-            <h4 style="margin-top:20px;margin-left:10px;">
+            <h4 style="margin-top:20px;margin-left:0;">
                 <span class="text-capitalize">Top Performing Resellers</span>
             </h4>
             <div class="mx-auto rounded bg-white px-4 py-2 mt-3">
@@ -142,7 +142,7 @@
                         @foreach ($res as $reseller)
                             <tr style="border-bottom: 1px dashed #ccc;">
                                 <td width="30%">
-                                    <p class="p-0 m-0 py-2" style="margin-top:4px;">{{ Str::limit($reseller->first_name . ' ' . $reseller->first_name . ' / ' . $reseller->organisation_name, 35) }}</p>
+                                    <p class="p-0 m-0 py-2" style="margin-top:4px;">{{ Str::limit($reseller->first_name . ' ' . $reseller->last_name, 35) }}</p>
                                 </td>
                                 <td width="20%">
                                     <p class="p-0 m-0 py-2" style="text-align: right;margin-top:4px;">${{ number_format($reseller->total_payments, 2) ?? '' }}</p>
@@ -185,7 +185,7 @@
             </div>
         </div>
         <div style="width: 49%;float: right;vertical-align: top;">
-            <h4 style="margin-top:20px;margin-left:10px;">
+            <h4 style="margin-top:20px;margin-left:0;">
                 <span class="text-capitalize">Top Performing Sales Managers</span>
             </h4>
             <div class="mx-auto rounded bg-white px-3 py-5 mt-3 text-center">

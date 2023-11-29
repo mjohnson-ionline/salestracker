@@ -49,17 +49,15 @@
     // add 'sales' type users - done
     // make it that the seller has some additional fields including 'monthly target' - done
     // the sales person is the pipedrive user - done
+    // lock down the app for various users - done
 
     // DOING
-
 
     // TO DO
     // generate reports for sales people
 
     // 2fa - https://medium.com/@maulanayusupp/how-to-create-two-factor-authentication-with-laravel-a44e58f69319
-    // edit the views for different roles
     // write a good spec document
-    // lock down the app using gates
 
     // TESTING
         // new pipedrive user with normal email - done

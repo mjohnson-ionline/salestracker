@@ -18,6 +18,7 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
     'pipedrive_api_token' => env('PIPEDRIVE_API_TOKEN', ''),
     'xero_webhook_key' => env('XERO_WEBHOOK_KEY', ''),
+    'default_comission' => env('DEFAULT_COMISSION', 0.1),
     'roles' => [
         'admin' => 'Admin',
         'sales' => 'Sales',
