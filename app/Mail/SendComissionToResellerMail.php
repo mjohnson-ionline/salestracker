@@ -8,12 +8,13 @@ use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
 
 class SendComissionToResellerMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct($reseller)
+    public function __construct($reseller, $csv_path)
     {
         $this->reseller = $reseller;
         $this->subject = 'Your Comissions Report from iOnline for the Month ' . date('F Y');
@@ -21,6 +22,7 @@ class SendComissionToResellerMail extends Mailable
         $this->last_name = $reseller->last_name;
         $this->email = $reseller->email;
         $this->organisation_name = $reseller->organisation_name;
+        $this->csv_path = $csv_path;
     }
 
     public function envelope(): Envelope
@@ -48,6 +50,8 @@ class SendComissionToResellerMail extends Mailable
 
     public function attachments(): array
     {
-        return [];
+        return [
+            Attachment::fromPath($this->csv_path),
+        ];
     }
 }

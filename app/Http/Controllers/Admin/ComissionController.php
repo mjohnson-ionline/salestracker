@@ -15,15 +15,15 @@ class ComissionController extends Controller
     {
 
         // get the reseller with all the details
-        $reseller = User::where('id', $request->reseller_id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->first();
-        if (!$reseller) {
+        $resellers_with_data = User::where('id', $request->reseller_id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->get();
+        if (!$resellers_with_data) {
             return redirect()->back()->with('error', 'Reseller not found');
         }
 
         $start_date = $request->start_date;
         $end_date = $request->end_date;
 
-        // if a start and an end date exist, filter the data by removing it from the array
+        // if a start and an end date exist, remove all payments from the array
         if ($start_date && $end_date) {
             foreach ($resellers_with_data as $key => $reseller) {
                 if (!is_null($reseller->deals)) {
@@ -38,7 +38,7 @@ class ComissionController extends Controller
                                         $unix_created_at = strtotime($payment->created_at);
 
                                         if ($unix_created_at < $unix_start_date || $unix_created_at > $unix_end_date) {
-                                            unset($reseller[$key][$key2]->deals[$key3]->invoices[$key4]->payments[$key5]);
+                                            unset($resellers_with_data[$key]->deals[$key3]->invoices[$key4]->payments[$key5]);
                                         }
                                     }
                                 }
@@ -49,26 +49,33 @@ class ComissionController extends Controller
             }
         }
 
-        // loop through each of the payments and calculate the total and download it as a csv
-        $total_payments = 0;
+        // calculat the total number of payments for each reseller
         $csv_data = [];
-        foreach ($reseller as $reseller_data) {
-            foreach ($reseller_data->deals as $key => $deal) {
-                $csv_data[] = ['Deal #' . $key + 1 , $deal->name];
+        foreach ($resellers_with_data as $reseller) {
+            $reseller->total_payments = 0;
+            $reseller->total_comission = 0;
+            if (!is_null($reseller->deals)) {
+                foreach ($reseller->deals as $key => $deal) {
+                    $csv_data[] = ['Deal #' . $key + 1 , $deal->name];
 
-                foreach ($deal->invoices as $invoice) {
-                    foreach ($invoice->payments as $payment) {
-                        $csv_data[] = ['Amount / Date', '$' . number_format($payment->amount, 2) . ' / ' . date('d-m-Y', strtotime($payment->created_at))];
-                        $total_payments += $payment->amount;
+                    if (!is_null($deal->invoices)) {
+                        foreach ($deal->invoices as $invoice) {
+                            if (!is_null($invoice->payments)) {
+                                foreach ($invoice->payments as $payment) {
+                                    $csv_data[] = ['Amount / Date', '$' . number_format($payment->amount, 2) . ' / ' . date('d-m-Y', strtotime($payment->created_at))];
+                                    $reseller->total_payments += $payment->amount;
+                                }
+                            }
+                        }
                     }
                 }
+
+                if ($reseller->total_payments != 0) {
+                    $csv_data[] = ['Total Payments', '$' . number_format($reseller->total_payments, 2)];
+                    $csv_data[] = ['Total Comission ('.$reseller->discount_comission. ' %)', '$' . number_format($reseller->total_payments * $reseller->discount_comission / 100, 2)];
+                    $reseller->total_comission = $reseller->total_payments * $reseller->discount_comission / 100;
+                }
             }
-            $reseller_data->total_payments = $total_payments;
-            $reseller_data->total_comission = $total_payments / $reseller_data->discount_comission;
-
-            $csv_data[] = ['Total Payments', '$' . number_format($total_payments, 2)];
-            $csv_data[] = ['Total Comission ('.$reseller_data->discount_comission. ' %)', '$' . number_format($total_payments / $reseller_data->discount_comission, 2)];
-
         }
 
         // download it as a csv
@@ -96,59 +103,84 @@ class ComissionController extends Controller
     {
 
         // get the reseller with all the details
-        $reseller = User::where('id', $request->reseller_id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->get();
-        if (!$reseller) {
+        $resellers_with_data = User::where('id', $request->reseller_id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->get();
+        if (!$resellers_with_data) {
             return redirect()->back()->with('error', 'Reseller not found');
         }
 
-        // if a start and an end date exist, filter the data by removing it from the array
-        if ($request->start_date && $request->end_date) {
-            foreach ($reseller as $key => $reseller_data) {
-                if (!is_null($reseller_data->deals)) {
-                    foreach ($reseller_data->deals as $key2 => $deal) {
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+
+        // if a start and an end date exist, remove all payments from the array
+        if ($start_date && $end_date) {
+            foreach ($resellers_with_data as $key => $reseller) {
+                if (!is_null($reseller->deals)) {
+                    foreach ($reseller->deals as $key3 => $deal) {
                         if (!is_null($deal->invoices)) {
-                            foreach ($deal->invoices as $key3 => $invoice) {
-                                if ($invoice->created_at < $request->start_date || $invoice->created_at > $request->end_date) {
-                                    unset($reseller[$key]->deals[$key2]->invoices[$key3]);
+                            foreach ($deal->invoices as $key4 => $invoice) {
+                                if (!is_null($invoice->payments)) {
+                                    foreach ($invoice->payments as $key5 => $payment) {
+
+                                        $unix_start_date = strtotime($start_date);
+                                        $unix_end_date = strtotime($end_date);
+                                        $unix_created_at = strtotime($payment->created_at);
+
+                                        if ($unix_created_at < $unix_start_date || $unix_created_at > $unix_end_date) {
+                                            unset($resellers_with_data[$key]->deals[$key3]->invoices[$key4]->payments[$key5]);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-
             }
         }
 
-        // loop through each of the payments and calculate the total and download it as a csv
-        $total_payments = 0;
-        foreach ($reseller as $reseller_data) {
-            if (!is_null($reseller_data->deals)) {
-                foreach ($reseller_data->deals as $key => $deal) {
+        // calculat the total number of payments for each reseller
+        $csv_data = [];
+        foreach ($resellers_with_data as $reseller) {
+            $reseller->total_payments = 0;
+            $reseller->total_comission = 0;
+            if (!is_null($reseller->deals)) {
+                foreach ($reseller->deals as $key => $deal) {
+                    $csv_data[] = ['Deal #' . $key + 1 , $deal->name];
+
                     if (!is_null($deal->invoices)) {
                         foreach ($deal->invoices as $invoice) {
                             if (!is_null($invoice->payments)) {
                                 foreach ($invoice->payments as $payment) {
-                                    $total_payments += $payment->amount;
+                                    $csv_data[] = ['Amount / Date', '$' . number_format($payment->amount, 2) . ' / ' . date('d-m-Y', strtotime($payment->created_at))];
+                                    $reseller->total_payments += $payment->amount;
                                 }
                             }
-
                         }
                     }
+                }
 
+                if ($reseller->total_payments != 0) {
+                    $csv_data[] = ['Total Payments', '$' . number_format($reseller->total_payments, 2)];
+                    $csv_data[] = ['Total Comission ('.$reseller->discount_comission. ' %)', '$' . number_format($reseller->total_payments * $reseller->discount_comission / 100, 2)];
+                    $reseller->total_comission = $reseller->total_payments * $reseller->discount_comission / 100;
                 }
             }
 
-            if ($total_payments != 0) {
-                $reseller_data->total_payments = $total_payments;
-                $reseller_data->total_comission = $total_payments / $reseller_data->discount_comission;
+            // save the csv
+            $csv_file =  'ionline_comissions_report_' . $reseller->id . '_' . date('d-m-Y') . '.csv';
+            $csv_path = storage_path('app/public/' . $csv_file);
+            $csv = fopen($csv_path, 'w');
+            foreach ($csv_data as $row) {
+                fputcsv($csv, $row);
             }
+            fclose($csv);
 
-        }
-
-        try {
-            Mail::to('matthew@ionline.com.au')->send(new SendComissionToResellerMail($reseller_data));
-        } catch (\Throwable $th) {
-            \Alert::add('error', 'Unable To Send Reseller Comission Report Email')->flash();
+            try {
+                Mail::to('matthew@ionline.com.au')->send(new SendComissionToResellerMail($reseller, $csv_path));
+            } catch (\Throwable $th) {
+                dd($th);
+                \Alert::add('error', 'Unable To Send Reseller Comission Report Email.' . $th->getMessage())->flash();
+                return redirect()->back();
+            }
         }
 
         \Alert::add('success', 'Send Reseller Comission Report Email')->flash();
