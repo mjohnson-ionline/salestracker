@@ -1,0 +1,7 @@
+the signature identifies a person and indicates their intention (e.g. providing approval via an email)
+
+the signature is appropriate (reliable) for its purpose (noting that digital signatures offer greater security than digitised signatures)
+
+the person receiving the document consents to receiving a signature in electronic form.
+
+after the document is signed, it can no longer be edited.

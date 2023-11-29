@@ -1,0 +1,1 @@
+<a href="{{ url( $crud->route . '/' . $entry->getKey() . '/send') }}" class="btn btn-sm btn-link"><i class="las la-paper-plane"></i> Send</a>
