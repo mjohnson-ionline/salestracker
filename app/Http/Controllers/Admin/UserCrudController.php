@@ -28,10 +28,24 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-
         CRUD::setModel(\App\Models\User::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
         CRUD::setEntityNameStrings('user', 'users');
+    }
+
+    public function store(Request $request)
+    {
+        // if the password is blank generate a random one
+        if (empty($request->input('password'))) {
+            $request->request->add(['password' => str_random(8)]);
+        }
+
+        // save it
+        $user = $this->crud->create($request->all());
+
+        // redirect back to the user list
+        return $this->crud->performSaveAction($user->getKey());
+
     }
 
     public function update(Request $request)
@@ -61,6 +75,15 @@ class UserCrudController extends CrudController
      */
     protected function setupListOperation()
     {
+
+        // add a filter for roles
+        CRUD::addFilter([
+            'type' => 'select2',
+            'name' => 'role',
+            'label' => 'Role',
+        ], config('app.roles'), function ($value) { // if the filter is active
+            $this->crud->addClause('where', 'role', $value);
+        });
 
         CRUD::column('role')->label('Role')->type('select_from_array')->options(config('app.roles'));
 
@@ -136,7 +159,7 @@ class UserCrudController extends CrudController
             ->wrapper(['class' => 'form-group col-md-12']);
 
         CRUD::field('discount_comission')
-            ->label('Reseller Global Comission (%)')
+            ->label('Reseller Global Comission (Default 10%)')
             ->type('number')
             ->attributes(['placeholder' => 'Enter a number between 0 and 100'])
             ->wrapper(['class' => 'form-group col-md-6']);

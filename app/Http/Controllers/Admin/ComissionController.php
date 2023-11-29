@@ -15,7 +15,7 @@ class ComissionController extends Controller
     {
 
         // get the reseller with all the details
-        $reseller = User::where('id', $request->reseller_id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->get();
+        $reseller = User::where('id', $request->reseller_id)->with('deals', 'deals.invoices', 'deals.invoices.lineItems', 'deals.invoices.lineItems', 'deals.invoices.payments')->first();
         if (!$reseller) {
             return redirect()->back()->with('error', 'Reseller not found');
         }
@@ -24,12 +24,12 @@ class ComissionController extends Controller
         $end_date = $request->end_date;
 
         // if a start and an end date exist, filter the data by removing it from the array
-        if ($request->start_date && $request->end_date) {
-            foreach ($reseller as $key => $reseller_data) {
-                if (!is_null($reseller_data->deals)) {
-                    foreach ($reseller_data->deals as $key2 => $deal) {
+        if ($start_date && $end_date) {
+            foreach ($resellers_with_data as $key => $reseller) {
+                if (!is_null($reseller->deals)) {
+                    foreach ($reseller->deals as $key3 => $deal) {
                         if (!is_null($deal->invoices)) {
-                            foreach ($deal->invoices as $key3 => $invoice) {
+                            foreach ($deal->invoices as $key4 => $invoice) {
                                 if (!is_null($invoice->payments)) {
                                     foreach ($invoice->payments as $key5 => $payment) {
 
@@ -38,7 +38,7 @@ class ComissionController extends Controller
                                         $unix_created_at = strtotime($payment->created_at);
 
                                         if ($unix_created_at < $unix_start_date || $unix_created_at > $unix_end_date) {
-                                            unset($reseller[$key]->deals[$key2]->invoices[$key3]->payments[$key5]);
+                                            unset($reseller[$key][$key2]->deals[$key3]->invoices[$key4]->payments[$key5]);
                                         }
                                     }
                                 }
@@ -295,19 +295,13 @@ class ComissionController extends Controller
                 }
 
                 if ($reseller->total_payments != 0) {
-                    $reseller->total_comission = $reseller->total_payments / $reseller->discount_comission;
+                    $reseller->total_comission = $reseller->total_payments * $reseller->discount_comission / 100;
                 }
             }
         }
 
-        // order the resellers by the total payments
-        /*if (!is_null($total_payments)) {
-            if ($total_payments != 0) {
-                usort($resellers_with_data, function ($a, $b) {
-                    return $a[0]->total_payments < $b[0]->total_payments;
-                });
-            }
-        }*/
+        // order the resellers by the total payments, but first make it a collection just in case
+        $resellers_with_data = collect($resellers_with_data)->sortByDesc('total_payments');
 
         $sales = [];
         return view('crud::pages.comission', compact('resellers_with_data', 'sales', 'start_date', 'end_date'));

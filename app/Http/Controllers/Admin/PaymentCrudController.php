@@ -30,7 +30,12 @@ class PaymentCrudController extends CrudController
 
     protected function setupListOperation()
     {
-        CRUD::column('created_at');
+        // created_at
+        CRUD::addColumn([
+            'name' => 'created_at',
+            'label' => 'Date',
+            'type' => 'date',
+        ]);
 
         CRUD::addColumn([
             'name' => 'amount',
@@ -82,6 +87,17 @@ class PaymentCrudController extends CrudController
 
     protected function setupCreateOperation()
     {
+
+        // amount
+        CRUD::addField([
+            'name' => 'amount',
+            'label' => 'Amount',
+            'type' => 'number',
+            'prefix' => '$',
+            'attributes' => [
+                'step' => '0.01',
+            ],
+        ]);
 
     }
 
